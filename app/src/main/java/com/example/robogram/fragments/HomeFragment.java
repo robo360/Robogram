@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -13,18 +14,24 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.robogram.R;
+import com.example.robogram.adapters.PostAdapter;
 import com.example.robogram.data.model.Post;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.robogram.data.model.Post.KEY_CREATED_AT;
 import static com.example.robogram.data.model.Post.KEY_USERNAME;
 
 public class HomeFragment extends Fragment {
-    RecyclerView rvPosts;
     public static final String TAG = "HomeFragment";
+
+    PostAdapter adapter;
+    RecyclerView rvPosts;
+    List<Post> posts;
 
     public HomeFragment(){
 
@@ -43,6 +50,10 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         rvPosts = view.findViewById(R.id.rvPosts);
+        posts = new ArrayList<>();
+        adapter = new PostAdapter(getContext(), posts);
+        rvPosts.setAdapter(adapter);
+        rvPosts.setLayoutManager(new LinearLayoutManager(getContext()));
         getPostsQuery();
     }
 
@@ -57,12 +68,16 @@ public class HomeFragment extends Fragment {
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         // Specify the object id
         query.include(KEY_USERNAME);
+        query.setLimit(20);
+        query.addDescendingOrder(KEY_CREATED_AT);
         query.findInBackground(new FindCallback<Post>() {
             @Override
             public void done(List<Post> objects, ParseException e) {
                 if(e != null){
                     Log.e(TAG, "Error in query"+e);
                 }else{
+                    posts.addAll(objects);
+                    adapter.notifyDataSetChanged();
                     Log.i(TAG, "Query response" + objects.get(0).getDescription()+ "username:" + objects.get(0).getUser().getUsername());
                 }
             }
