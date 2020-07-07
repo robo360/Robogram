@@ -19,6 +19,7 @@ import com.example.robogram.data.model.Post;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,13 +64,14 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
-    private void getPostsQuery() {
+    protected void getPostsQuery() {
         //Specify which class to query
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         // Specify the object id
-        query.include(KEY_USERNAME);
+        query.include(Post.KEY_USERNAME);
+        query.whereEqualTo(Post.KEY_USERNAME, ParseUser.getCurrentUser());
         query.setLimit(20);
-        query.addDescendingOrder(KEY_CREATED_AT);
+        query.addDescendingOrder(Post.KEY_CREATED_AT);
         query.findInBackground(new FindCallback<Post>() {
             @Override
             public void done(List<Post> objects, ParseException e) {

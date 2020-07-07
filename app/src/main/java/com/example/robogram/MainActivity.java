@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                     default:
                         Toast.makeText(MainActivity.this, "Profile", Toast.LENGTH_SHORT).show();
                         Log.i("MainActivity", "Profile");
-                        fragment = new ComposeFragment();
+                        fragment = new ProfileFragment();
                         break;
                 }
 
