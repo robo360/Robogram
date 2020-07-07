@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,6 +34,7 @@ public class HomeFragment extends Fragment {
     PostAdapter adapter;
     RecyclerView rvPosts;
     List<Post> posts;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     public HomeFragment(){
 
@@ -51,11 +53,27 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         rvPosts = view.findViewById(R.id.rvPosts);
+        swipeRefreshLayout = view.findViewById(R.id.SwipeContainer);
         posts = new ArrayList<>();
         adapter = new PostAdapter(getContext(), posts);
         rvPosts.setAdapter(adapter);
         rvPosts.setLayoutManager(new LinearLayoutManager(getContext()));
         getPostsQuery();
+
+        //add a listener on the swipeContainer
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                posts.clear();
+                getPostsQuery();
+            }
+        });
+        // Configure the refreshing colors
+        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
     }
 
     @Override
@@ -82,6 +100,7 @@ public class HomeFragment extends Fragment {
                     adapter.notifyDataSetChanged();
                     Log.i(TAG, "Query response" + objects.get(0).getDescription()+ "username:" + objects.get(0).getUser().getUsername());
                 }
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
     }
