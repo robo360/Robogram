@@ -29,8 +29,10 @@ import com.example.robogram.R;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.parse.LogInCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.parse.SignUpCallback;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -48,12 +50,17 @@ public class LoginActivity extends AppCompatActivity {
         final EditText usernameEditText = findViewById(R.id.username);
         final EditText passwordEditText = findViewById(R.id.password);
         final Button loginButton = findViewById(R.id.login);
+        final Button signupButton = findViewById(R.id.signup);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
+
+        //handle login
 
         loginButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
+                //disable the clickability of the signup button
+                signupButton.setClickable(false);
                 String username = usernameEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
                 ParseUser.logInInBackground(username, password, new LogInCallback() {
@@ -70,6 +77,36 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        //handle signup
+        signupButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //disable the clickability of the login button
+                loginButton.setClickable(false);
+                String username = usernameEditText.getText().toString();
+                String password = passwordEditText.getText().toString();
+                ParseUser user = new ParseUser();
+                // Set the user's username and password, which can be obtained by a forms
+                user.setUsername(username);
+                user.setPassword(password);
+                user.signUpInBackground( new SignUpCallback(){
+                    /**
+                     * Override this function with the code you want to run after the signUp is complete.
+                     *
+                     * @param e The exception raised by the signUp, or {@code null} if it succeeded.
+                     */
+                    @Override
+                    public void done(ParseException e) {
+                        if (e != null) {
+                            Log.i("LoginActivity", e.toString());
+                            Snackbar.make(signupButton, "Sign up Failed.Try again!" + e, BaseTransientBottomBar.LENGTH_SHORT).show();
+                        }else{
+                            goMainActivity();
+                        }
+                    }
+                });
+            }
+        });
     }
 
     private void goMainActivity() {

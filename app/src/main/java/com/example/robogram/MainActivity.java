@@ -2,10 +2,12 @@ package com.example.robogram;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -29,11 +31,13 @@ import com.example.robogram.data.model.Post;
 import com.example.robogram.fragments.ComposeFragment;
 import com.example.robogram.fragments.HomeFragment;
 import com.example.robogram.fragments.ProfileFragment;
+import com.example.robogram.ui.login.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
+import com.parse.LogOutCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;
@@ -50,7 +54,11 @@ import java.util.List;
 import static com.example.robogram.data.model.Post.KEY_USERNAME;
 
 public class MainActivity extends AppCompatActivity {
-    BottomNavigationView bottomNavigationView;
+    private BottomNavigationView bottomNavigationView;
+    private MenuItem logoutMenuItem;
+    private Toolbar toolbar;
+
+    public static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +67,34 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
+        logoutMenuItem = findViewById(R.id.logout);
+        toolbar = findViewById(R.id.toolbar);
 
+        //set a listener on the menu for logout
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if(item.getItemId() == R.id.logout){
+                    ParseUser.logOutInBackground(new LogOutCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if(e != null) {
+                            Log.e(TAG, "Error while logging out:" + e);
+                            Toast.makeText(MainActivity.this, "Error Logging out. Try again!", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        Toast.makeText(MainActivity.this, "Logged out!", Toast.LENGTH_SHORT).show();
+                        goToLogin();
+                        return;
+                    }
+                });
+
+                }
+                return true;
+            }
+        });
+
+        //set a listener on the Bottom Navigation to launch fragments
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -91,6 +126,12 @@ public class MainActivity extends AppCompatActivity {
         });
         // Set default selection
         bottomNavigationView.setSelectedItemId(R.id.action_home);
+    }
+
+    private void goToLogin() {
+        Intent i = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(i);
+        finish();
     }
 
 

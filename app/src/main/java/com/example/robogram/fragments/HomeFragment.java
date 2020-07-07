@@ -98,7 +98,7 @@ public class HomeFragment extends Fragment {
                 }else{
                     posts.addAll(objects);
                     adapter.notifyDataSetChanged();
-                    Log.i(TAG, "Query response" + objects.get(0).getDescription()+ "username:" + objects.get(0).getUser().getUsername());
+                    //Log.i(TAG, "Query response" + objects.get(0).getDescription()+ "username:" + objects.get(0).getUser().getUsername());
                 }
                 swipeRefreshLayout.setRefreshing(false);
             }
