@@ -13,10 +13,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.example.robogram.R;
 import com.example.robogram.adapters.PostAdapter;
 import com.example.robogram.data.model.Post;
+import com.example.robogram.helpers.EndlessRecyclerViewScrollListener;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -31,10 +33,11 @@ import static com.example.robogram.data.model.Post.KEY_USERNAME;
 public class HomeFragment extends Fragment {
     public static final String TAG = "HomeFragment";
 
-    PostAdapter adapter;
-    RecyclerView rvPosts;
-    List<Post> posts;
-    SwipeRefreshLayout swipeRefreshLayout;
+    public PostAdapter adapter;
+    private RecyclerView rvPosts;
+    protected List<Post> posts;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private EndlessRecyclerViewScrollListener scrollListener;
 
     public HomeFragment(){
 
@@ -56,8 +59,22 @@ public class HomeFragment extends Fragment {
         swipeRefreshLayout = view.findViewById(R.id.SwipeContainer);
         posts = new ArrayList<>();
         adapter = new PostAdapter(getContext(), posts);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         rvPosts.setAdapter(adapter);
-        rvPosts.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvPosts.setLayoutManager(linearLayoutManager);
+
+        //add on a scrollListener
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                getPostsQueryMore(totalItemsCount);
+            }
+        };
+        // Adds the scroll listener to RecyclerView
+        rvPosts.addOnScrollListener(scrollListener);
+
         getPostsQuery();
 
         //add a listener on the swipeContainer
@@ -74,6 +91,29 @@ public class HomeFragment extends Fragment {
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
+    }
+
+    private void getPostsQueryMore(int totalItemsCount) {
+        //Specify which class to query
+        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
+        // Specify the object id
+        query.include(Post.KEY_USERNAME);
+        query.whereEqualTo(Post.KEY_USERNAME, ParseUser.getCurrentUser());
+        query.setLimit(20);
+        query.whereLessThan(KEY_CREATED_AT, posts.get(totalItemsCount - 1).getCreatedAt());
+        query.addDescendingOrder(Post.KEY_CREATED_AT);
+        query.findInBackground(new FindCallback<Post>() {
+            @Override
+            public void done(List<Post> objects, ParseException e) {
+                if(e != null){
+                    Log.e(TAG, "Error in query"+e);
+                }else{
+                    posts.addAll(objects);
+                    adapter.notifyDataSetChanged();
+                    Log.i(TAG, "New Query"+ posts.size());
+                }
+            }
+        });
     }
 
     @Override

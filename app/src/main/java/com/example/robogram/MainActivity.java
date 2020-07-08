@@ -6,6 +6,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -31,6 +33,7 @@ import com.example.robogram.data.model.Post;
 import com.example.robogram.fragments.ComposeFragment;
 import com.example.robogram.fragments.HomeFragment;
 import com.example.robogram.fragments.ProfileFragment;
+import com.example.robogram.helpers.EndlessRecyclerViewScrollListener;
 import com.example.robogram.ui.login.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
@@ -70,24 +73,26 @@ public class MainActivity extends AppCompatActivity {
         logoutMenuItem = findViewById(R.id.logout);
         toolbar = findViewById(R.id.toolbar);
 
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+
         //set a listener on the menu for logout
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                if(item.getItemId() == R.id.logout){
+                if (item.getItemId() == R.id.logout) {
                     ParseUser.logOutInBackground(new LogOutCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        if(e != null) {
-                            Log.e(TAG, "Error while logging out:" + e);
-                            Toast.makeText(MainActivity.this, "Error Logging out. Try again!", Toast.LENGTH_SHORT).show();
+                        @Override
+                        public void done(ParseException e) {
+                            if (e != null) {
+                                Log.e(TAG, "Error while logging out:" + e);
+                                Toast.makeText(MainActivity.this, "Error Logging out. Try again!", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            Toast.makeText(MainActivity.this, "Logged out!", Toast.LENGTH_SHORT).show();
+                            goToLogin();
                             return;
                         }
-                        Toast.makeText(MainActivity.this, "Logged out!", Toast.LENGTH_SHORT).show();
-                        goToLogin();
-                        return;
-                    }
-                });
+                    });
 
                 }
                 return true;
@@ -126,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
         });
         // Set default selection
         bottomNavigationView.setSelectedItemId(R.id.action_home);
+
     }
 
     private void goToLogin() {

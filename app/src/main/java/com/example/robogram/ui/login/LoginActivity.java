@@ -46,6 +46,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         // Todo: set up an indeterminate progress bar for showing that the app is making a call on the server.
+        // Todo: Remove the keyboard when finishing to typing
 
         final EditText usernameEditText = findViewById(R.id.username);
         final EditText passwordEditText = findViewById(R.id.password);
