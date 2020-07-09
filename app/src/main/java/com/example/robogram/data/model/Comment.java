@@ -4,10 +4,10 @@ import com.parse.ParseClassName;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
-@ParseClassName("Like")
+@ParseClassName("Comment")
 public class Comment extends ParseObject {
     public static final String KEY_TEXT = "text";
-    public static final String KEY_USERNAME = "username";
+    public static final String KEY_USERNAME = "author";
     public static final String KEY_POST = "Post";
     public static final String KEY_CREATED_AT = "createdAt";
 

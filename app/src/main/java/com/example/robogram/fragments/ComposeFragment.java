@@ -50,11 +50,11 @@ import static com.example.robogram.data.model.Post.KEY_USERNAME;
  * create an instance of this fragment.
  */
 public class ComposeFragment extends Fragment {
-    Button btnSubmit;
-    Button btnCapture;
-    ImageView ivImagePost;
-    EditText etDescription;
-    ProgressBar pb;
+    private Button btnSubmit;
+    private Button btnCapture;
+    private ImageView ivImagePost;
+    private EditText etDescription;
+    private ProgressBar pb;
 
     public final String APP_TAG = "ComposeFragment";
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
@@ -69,15 +69,6 @@ public class ComposeFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ComposeFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static ComposeFragment newInstance( ) {
         ComposeFragment fragment = new ComposeFragment();
         return fragment;

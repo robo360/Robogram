@@ -5,12 +5,16 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,16 +22,29 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.robogram.R;
+import com.example.robogram.adapters.CommentAdapter;
+import com.example.robogram.data.model.Comment;
 import com.example.robogram.data.model.Post;
+import com.google.android.material.button.MaterialButton;
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import org.parceler.Parcels;
+import org.w3c.dom.Text;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import static com.example.robogram.data.model.Comment.KEY_POST;
+import static com.example.robogram.data.model.Post.KEY_CREATED_AT;
+import static com.example.robogram.data.model.Post.KEY_USERNAME;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -35,14 +52,20 @@ import java.util.Date;
  * create an instance of this fragment.
  */
 public class PostDetailFragment extends Fragment {
-    TextView tvDescription;
-    TextView tvUsername;
-    ImageView ivImagePost;
-    TextView tvCreatedAt;
-    ImageButton btnLike;
-    TextView tvLikes;
-    Post post;
+    private TextView tvDescription;
+    private TextView tvUsername;
+    private ImageView ivImagePost;
+    private TextView tvCreatedAt;
+    private ImageButton btnLike;
+    private TextView tvLikes;
+    private Post post;
+    private RecyclerView rvComments;
+    private List<Comment> comments;
+    private CommentAdapter adapter;
+    private MaterialButton btnReply;
+    private TextView tvCommentText;
 
+    public static final String TAG = "PostDetailFragment";
 
     public PostDetailFragment() {
         // Required empty public constructor
@@ -86,6 +109,17 @@ public class PostDetailFragment extends Fragment {
         tvCreatedAt = view.findViewById(R.id.tvCreatedAt);
         btnLike = view.findViewById(R.id.btnLike);
         tvLikes = view.findViewById(R.id.tvLikes);
+        rvComments = view.findViewById(R.id.rvComments);
+        btnReply = view.findViewById(R.id.btnReply);
+        tvCommentText = view.findViewById(R.id.tvCommentText);
+
+        //initiate comments
+        comments = new ArrayList<>();
+
+        //set up the recyclerView
+        adapter = new CommentAdapter(comments, getContext());
+        rvComments.setAdapter(adapter);
+        rvComments.setLayoutManager(new LinearLayoutManager(getContext()));
 
         //fill the layout with data
         String description = "<b>" + post.getUser().getUsername() + "</b> " + post.getDescription();
@@ -119,7 +153,53 @@ public class PostDetailFragment extends Fragment {
                 });
             }
         });
+        //set a listener on the comment button
+        btnReply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Comment comment = new Comment();
+                comment.setUser(ParseUser.getCurrentUser());
+                comment.setPost(post);
+                comment.setText(tvCommentText.getText().toString());
+                comment.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if(e != null){
+                            Log.e(TAG, "error while saving comment"+e);
+                        }else{
+                            tvCommentText.setText("");
+                            Toast.makeText(getContext(), "Comment Posted!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
+        //populate the recyclerView
+        getCommentsQuery();
+
+
     }
+
+    private void getCommentsQuery() {
+        //Specify which class to query
+        ParseQuery<Comment> query = ParseQuery.getQuery(Comment.class);
+        // Specify the object id
+        query.include(KEY_USERNAME);
+        query.whereEqualTo(KEY_POST, post);
+        query.addDescendingOrder(KEY_CREATED_AT);
+        query.findInBackground(new FindCallback<Comment>() {
+            @Override
+            public void done(List<Comment> objects, ParseException e) {
+                if(e != null){
+                    Log.e(TAG, "Error requesting comments" + e);
+                }else{
+                    comments.addAll(objects);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        });
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
