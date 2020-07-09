@@ -19,7 +19,6 @@ public class ProfileFragment extends HomeFragment {
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         // Specify the object id
         query.include(KEY_USERNAME);
-        query.setLimit(20);
         query.addDescendingOrder(KEY_CREATED_AT);
         query.findInBackground(new FindCallback<Post>() {
             @Override
@@ -29,7 +28,7 @@ public class ProfileFragment extends HomeFragment {
                 }else{
                     posts.addAll(objects);
                     adapter.notifyDataSetChanged();
-                    Log.i(TAG, "Query response" + objects.get(0).getDescription()+ "username:" + objects.get(0).getUser().getUsername());
+                    Log.i(TAG, "Query response: " + objects.get(0).getCreatedAt());
                 }
             }
         });

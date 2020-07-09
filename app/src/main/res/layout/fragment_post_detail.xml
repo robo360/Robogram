@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/BtnSend"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="false">
+
+    <ImageView
+        android:id="@+id/ivImagePost"
+        android:layout_width="0dp"
+        android:layout_height="400dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="8dp"
+        android:contentDescription="Profile picture"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvUsername"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/tvUsername"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        android:layout_toEndOf="@+id/ivImagePost"
+        android:textColor="#222020"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="berwaroberto" />
+
+    <TextView
+        android:id="@+id/tvDescription"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvTimeAgo"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="16dp"
+        android:layout_toEndOf="@+id/ivImagePost"
+        android:autoLink="web"
+        android:fontFamily="sans-serif"
+        android:linksClickable="true"
+        android:textAlignment="viewStart"
+        android:textAllCaps="false"
+        android:textColor="#333333"
+        android:textColorLink="#1976D2"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvLikes"
+        tools:text="This is my tweet"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tvTimeAgo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="false"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_toEndOf="@+id/tvUsername"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.886"
+        app:layout_constraintStart_toEndOf="@+id/tvUsername"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="8 min. ago"
+        tools:visibility="gone" />
+
+    <ImageButton
+        android:id="@+id/btnLike"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:backgroundTint="#FFFFFF"
+        android:scaleType="fitXY"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivImagePost"
+        app:srcCompat="@drawable/ufi_heart" />
+
+    <ImageButton
+        android:id="@+id/btnComment"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:backgroundTint="#FFFFFF"
+        android:scaleType="fitXY"
+        app:layout_constraintStart_toEndOf="@+id/btnLike"
+        app:layout_constraintTop_toBottomOf="@+id/ivImagePost"
+        app:srcCompat="@drawable/ufi_comment" />
+
+    <ImageButton
+        android:id="@+id/btnMessage"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:backgroundTint="#FFFFFF"
+        android:baselineAlignBottom="false"
+        android:clickable="false"
+        android:scaleType="fitXY"
+        app:layout_constraintStart_toEndOf="@+id/btnComment"
+        app:layout_constraintTop_toBottomOf="@+id/ivImagePost"
+        app:srcCompat="@drawable/ufi_new_direct" />
+
+    <TextView
+        android:id="@+id/tvLikes"
+        android:layout_width="162dp"
+        android:layout_height="29dp"
+        android:layout_marginStart="16dp"
+        android:text="1200 likes"
+        android:textAlignment="viewStart"
+        android:textColor="#050505"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnComment"
+        tools:text="1200 likes" />
+
+    <TextView
+        android:id="@+id/tvCreatedAt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvDescription"
+        app:layout_constraintVertical_bias="0.0"
+        tools:text="June 8 " />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_person_24"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <EditText
+        android:id="@+id/editTextTextMultiLine"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/edit_text_border"
+        android:ems="10"
+        android:gravity="start|top"
+        android:inputType="textMultiLine"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCreatedAt" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/etReply"
+        android:layout_width="85dp"
+        android:layout_height="42dp"
+        android:layout_marginEnd="16dp"
+        android:padding="4dp"
+        android:text="Reply"
+        app:backgroundTint="#00897B"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextMultiLine" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvComments"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etReply"
+        app:layout_constraintVertical_bias="0.0" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

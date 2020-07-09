@@ -30,7 +30,7 @@ import java.util.List;
 import static com.example.robogram.data.model.Post.KEY_CREATED_AT;
 import static com.example.robogram.data.model.Post.KEY_USERNAME;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements PostAdapter.OnClickBtnMoreListener {
     public static final String TAG = "HomeFragment";
 
     public PostAdapter adapter;
@@ -38,10 +38,12 @@ public class HomeFragment extends Fragment {
     protected List<Post> posts;
     private SwipeRefreshLayout swipeRefreshLayout;
     private EndlessRecyclerViewScrollListener scrollListener;
+    HomeFragment fragment;
 
-    public HomeFragment(){
+    public HomeFragment() {
 
     }
+
     /**
      * Called immediately after {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}
      * has returned, but before any saved state has been restored in to the view.
@@ -57,11 +59,13 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         rvPosts = view.findViewById(R.id.rvPosts);
         swipeRefreshLayout = view.findViewById(R.id.SwipeContainer);
+        fragment = this;
         posts = new ArrayList<>();
-        adapter = new PostAdapter(getContext(), posts);
+        adapter = new PostAdapter(getContext(), posts, fragment);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         rvPosts.setAdapter(adapter);
         rvPosts.setLayoutManager(linearLayoutManager);
+
 
         //add on a scrollListener
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
@@ -105,12 +109,12 @@ public class HomeFragment extends Fragment {
         query.findInBackground(new FindCallback<Post>() {
             @Override
             public void done(List<Post> objects, ParseException e) {
-                if(e != null){
-                    Log.e(TAG, "Error in query"+e);
-                }else{
+                if (e != null) {
+                    Log.e(TAG, "Error in query" + e);
+                } else {
                     posts.addAll(objects);
                     adapter.notifyDataSetChanged();
-                    Log.i(TAG, "New Query"+ posts.size());
+                    Log.i(TAG, "New Query" + posts.size());
                 }
             }
         });
@@ -122,6 +126,7 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
+
     protected void getPostsQuery() {
         //Specify which class to query
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
@@ -133,9 +138,9 @@ public class HomeFragment extends Fragment {
         query.findInBackground(new FindCallback<Post>() {
             @Override
             public void done(List<Post> objects, ParseException e) {
-                if(e != null){
-                    Log.e(TAG, "Error in query"+e);
-                }else{
+                if (e != null) {
+                    Log.e(TAG, "Error in query" + e);
+                } else {
                     posts.addAll(objects);
                     adapter.notifyDataSetChanged();
                     //Log.i(TAG, "Query response" + objects.get(0).getDescription()+ "username:" + objects.get(0).getUser().getUsername());
@@ -143,5 +148,12 @@ public class HomeFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
+    }
+
+    @Override
+    public void onBtnMoreClicked(int position) {
+        Post post = posts.get(position);
+        Fragment fragment = PostDetailFragment.newInstance(post);
+        getParentFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).commit();
     }
 }

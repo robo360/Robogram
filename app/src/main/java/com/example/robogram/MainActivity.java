@@ -25,10 +25,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.robogram.adapters.PostAdapter;
 import com.example.robogram.data.model.Post;
 import com.example.robogram.fragments.ComposeFragment;
 import com.example.robogram.fragments.HomeFragment;
@@ -56,10 +58,12 @@ import java.util.List;
 
 import static com.example.robogram.data.model.Post.KEY_USERNAME;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
+
     private BottomNavigationView bottomNavigationView;
     private MenuItem logoutMenuItem;
     private Toolbar toolbar;
+    private ImageButton ibCam;
 
     public static final String TAG = "MainActivity";
 
@@ -72,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         logoutMenuItem = findViewById(R.id.logout);
         toolbar = findViewById(R.id.toolbar);
+        ibCam = findViewById(R.id.ibCam);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
 
@@ -132,6 +137,15 @@ public class MainActivity extends AppCompatActivity {
         // Set default selection
         bottomNavigationView.setSelectedItemId(R.id.action_home);
 
+        //set clicklistener on camera ImageView
+        ibCam.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment fragment = new ComposeFragment();
+                fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+            }
+        });
+
     }
 
     private void goToLogin() {
@@ -139,6 +153,4 @@ public class MainActivity extends AppCompatActivity {
         startActivity(i);
         finish();
     }
-
-
 }

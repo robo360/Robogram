@@ -5,12 +5,16 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
+import org.parceler.Parcel;
+
+@Parcel(analyze={Post.class})
 @ParseClassName("Post")
-public class Post extends ParseObject {
+public class Post extends ParseObject{
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_USERNAME = "username";
     public static final String KEY_IMAGE = "image";
     public static final String KEY_CREATED_AT = "createdAt";
+    public static final String KEY_LIKES = "likes";
 
 
     public ParseUser getUser() {
@@ -34,4 +38,12 @@ public class Post extends ParseObject {
     public void setDescription(String description){
         put(KEY_DESCRIPTION, description);
     }
+
+    public int getLikes(){
+        return getNumber(KEY_LIKES).intValue();
+    }
+    public void setLikes(int likes){
+        put(KEY_LIKES, likes);
+    }
+
 }

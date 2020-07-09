@@ -1,21 +1,31 @@
 package com.example.robogram.adapters;
 
 import android.content.Context;
+import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.robogram.R;
 import com.example.robogram.data.model.Post;
+import com.example.robogram.fragments.HomeFragment;
+import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.SaveCallback;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
@@ -41,10 +51,16 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
      */
     Context context;
     List<Post> posts;
+    HomeFragment fragment;
 
-    public PostAdapter(Context context, List<Post> posts) {
+    public interface OnClickBtnMoreListener{
+        public void onBtnMoreClicked(int position);
+    }
+
+    public PostAdapter(Context context, List<Post> posts, HomeFragment fragment) {
         this.context = context;
         this.posts = posts;
+        this.fragment = fragment;
     }
     @NonNull
     @Override
@@ -93,18 +109,70 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
         TextView tvDescription;
         TextView tvUsername;
         ImageView ivImagePost;
-
+        TextView tvCreatedAt;
+        ImageButton btnLike;
+        TextView tvLikes;
+        ImageButton btnMore;
+        ImageButton btnReply;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvDescription = itemView.findViewById(R.id.tvDescription);
             tvUsername = itemView.findViewById(R.id.tvUsername);
             ivImagePost = itemView.findViewById(R.id.ivImagePost);
+            tvCreatedAt = itemView.findViewById(R.id.tvCreatedAt);
+            btnLike = itemView.findViewById(R.id.btnLike);
+            tvLikes = itemView.findViewById(R.id.tvLikes);
+            btnMore = itemView.findViewById(R.id.btnMore);
+            btnReply = itemView.findViewById(R.id.btnComment);
+
+            //set a listener on the btnLike button
+            btnLike.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Post post = posts.get(getAdapterPosition());
+                    int likes = post.getLikes() + 1;
+                    post.setLikes(likes);
+                    btnLike.setImageDrawable(context.getDrawable(R.drawable.ufi_heart_active));
+                    tvLikes.setText(Integer.toString(likes) + " likes");
+                    post.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if(e != null){
+                                Log.e("HomeActivity", "Error Saving likes" + e);
+                                Toast.makeText(context, "Did not like", Toast.LENGTH_SHORT).show();
+                                btnLike.setImageDrawable(context.getDrawable(R.drawable.ufi_heart));
+                            }
+                        }
+                    });
+                }
+            });
+
+            //Set a listener on the view in another screen button
+            btnMore.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    fragment.onBtnMoreClicked(getAdapterPosition());
+                }
+            });
+
+            //Set a listener on the reply button
+            btnReply.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    fragment.onBtnMoreClicked(getAdapterPosition());
+                }
+            });
 
         }
 
         public void bind(Post post) {
-            tvDescription.setText(post.getDescription());
+            String description = "<b>" + post.getUser().getUsername() + "</b> " + post.getDescription();
+            tvDescription.setText(Html.fromHtml(description));
             tvUsername.setText(post.getUser().getUsername());
+            tvLikes.setText(post.getLikes()+ " likes");
+            Date date = post.getCreatedAt();
+            String dateWithMonthAndDayOnly = new SimpleDateFormat("MMMM dd.").format(date);
+            tvCreatedAt.setText(dateWithMonthAndDayOnly);
             ParseFile image = post.getImage();
             if(image != null){
                 Glide.with(context).load(post.getImage().getUrl()).into(ivImagePost);
