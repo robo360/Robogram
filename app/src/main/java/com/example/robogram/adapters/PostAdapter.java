@@ -53,8 +53,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
     List<Post> posts;
     HomeFragment fragment;
 
-    public interface OnClickBtnMoreListener{
+    public interface OnClickBtnMoreListeners{
         public void onBtnMoreClicked(int position);
+        public void onGotoProfileClicked(int position);
     }
 
     public PostAdapter(Context context, List<Post> posts, HomeFragment fragment) {
@@ -114,6 +115,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
         private TextView tvLikes;
         private ImageButton btnMore;
         private ImageButton btnReply;
+        private ImageView ivProfile;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvDescription = itemView.findViewById(R.id.tvDescription);
@@ -124,6 +126,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
             tvLikes = itemView.findViewById(R.id.tvLikes);
             btnMore = itemView.findViewById(R.id.btnMore);
             btnReply = itemView.findViewById(R.id.btnComment);
+            ivProfile = itemView.findViewById(R.id.ivProfile);
 
             //set a listener on the btnLike button
             btnLike.setOnClickListener(new View.OnClickListener() {
@@ -163,6 +166,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
                 }
             });
 
+            //set a listener on the profile and username place
+
+            View.OnClickListener goToProfile = new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    fragment.onGotoProfileClicked(getAdapterPosition());
+                }
+            };
+            tvUsername.setOnClickListener(goToProfile);
+            ivProfile.setOnClickListener(goToProfile);
+
         }
 
         public void bind(Post post) {
@@ -173,11 +187,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
             Date date = post.getCreatedAt();
             String dateWithMonthAndDayOnly = new SimpleDateFormat("MMMM dd.").format(date);
             tvCreatedAt.setText(dateWithMonthAndDayOnly);
+            ParseFile imageProfile = post.getUser().getParseFile("image");
+            if(imageProfile != null){
+                Glide.with(context).load(imageProfile.getUrl()).into(ivProfile);
+            }
             ParseFile image = post.getImage();
             if(image != null){
                 Glide.with(context).load(post.getImage().getUrl()).into(ivImagePost);
             }
-
         }
     }
     // Clean all elements of the recycler

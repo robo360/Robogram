@@ -35,7 +35,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintStart_toEndOf="@+id/ivProfile"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="berwaroberto" />
 
@@ -137,7 +137,7 @@
         tools:text="June 8 " />
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/ivProfile"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="16dp"

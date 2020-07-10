@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.bumptech.glide.Glide;
 import com.example.robogram.R;
 import com.example.robogram.adapters.PostAdapter;
 import com.example.robogram.adapters.ProfileAdapter;
@@ -23,8 +24,12 @@ import com.example.robogram.data.model.Post;
 import com.example.robogram.helpers.EndlessRecyclerViewScrollListener;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,17 +56,40 @@ public class ProfileFragment extends Fragment {
     protected ProfileFragment fragment;
     protected ImageView ivProfile;
     protected TextView tvUsername;
+    protected  Post post;
+    ParseUser user;
+
+    public ProfileFragment(){
+
+    }
+    public static ProfileFragment newInstance(Post post) {
+        ProfileFragment fragment = new ProfileFragment();
+        Bundle args = new Bundle();
+        args.putParcelable("post", Parcels.wrap(post));
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         rvUserPosts = view.findViewById(R.id.rvUserPosts);
         ivProfile = view.findViewById(R.id.ivProfile);
         tvUsername = view.findViewById(R.id.tvUsername);
+        if(getArguments() != null) {
+            post = Parcels.unwrap(getArguments().getParcelable("post"));
+            user = post.getUser();
+        } else{
+            user = ParseUser.getCurrentUser();
+        }
+        tvUsername.setText(user.getUsername());
+        String image = user.getUsername();
+        if(image != null){ Glide.with(getContext()).load(user.getParseFile("image").getUrl()).into(ivProfile);}
         posts = new ArrayList<>();
         fragment = this;
         adapter = new ProfileAdapter(getContext(), posts, fragment);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2 );
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
         rvUserPosts.setAdapter(adapter);
         rvUserPosts.setLayoutManager(gridLayoutManager);
         getPostsQuery();
@@ -80,7 +108,7 @@ public class ProfileFragment extends Fragment {
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         //Specify the object id
         query.include(KEY_USERNAME);
-        query.whereEqualTo(KEY_USERNAME, ParseUser.getCurrentUser());
+        query.whereEqualTo(KEY_USERNAME, user);
         query.addDescendingOrder(KEY_CREATED_AT);
         query.findInBackground(new FindCallback<Post>() {
             @Override
@@ -90,7 +118,7 @@ public class ProfileFragment extends Fragment {
                 }else{
                     posts.addAll(objects);
                     adapter.notifyDataSetChanged();
-                    Log.i(TAG, "Query response: " + objects.get(0).getCreatedAt());
+                    //Log.i(TAG, "Query response: " + objects.get(0).getCreatedAt());
                 }
             }
         });

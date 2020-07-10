@@ -30,7 +30,7 @@ import java.util.List;
 import static com.example.robogram.data.model.Post.KEY_CREATED_AT;
 import static com.example.robogram.data.model.Post.KEY_USERNAME;
 
-public class HomeFragment extends Fragment implements PostAdapter.OnClickBtnMoreListener {
+public class HomeFragment extends Fragment implements PostAdapter.OnClickBtnMoreListeners {
     public static final String TAG = "HomeFragment";
 
     protected PostAdapter adapter;
@@ -38,6 +38,7 @@ public class HomeFragment extends Fragment implements PostAdapter.OnClickBtnMore
     protected List<Post> posts;
     protected SwipeRefreshLayout swipeRefreshLayout;
     protected EndlessRecyclerViewScrollListener scrollListener;
+
     HomeFragment fragment;
 
     public HomeFragment() {
@@ -156,4 +157,12 @@ public class HomeFragment extends Fragment implements PostAdapter.OnClickBtnMore
         Fragment fragment = PostDetailFragment.newInstance(post);
         getParentFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).commit();
     }
+
+    @Override
+    public void onGotoProfileClicked(int position) {
+        Post post = posts.get(position);
+        Fragment fragment = ProfileFragment.newInstance(post);
+        getParentFragmentManager().beginTransaction().replace(R.id.flContainer, fragment).commit();
+    }
+
 }

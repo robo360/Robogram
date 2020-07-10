@@ -8,13 +8,11 @@
 
     <!-- TODO: Update blank fragment layout -->
 
-
     <ImageView
         android:id="@+id/ivProfile"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
+
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="183dp"
@@ -25,20 +23,19 @@
         android:id="@+id/rvUserPosts"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/ivProfile"
-        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tvUsername"
         android:layout_marginStart="0dp"
-        android:layout_marginTop="29dp" />
+        android:layout_marginTop="1dp" />
 
     <TextView
         android:id="@+id/tvUsername"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="82dp"
-        android:layout_marginEnd="187dp"
+        android:layout_marginTop="84dp"
+        android:layout_marginEnd="188dp"
+        android:textAlignment="center"
+        android:textStyle="bold"
         tools:text="Roberto" />
 
 </RelativeLayout>
