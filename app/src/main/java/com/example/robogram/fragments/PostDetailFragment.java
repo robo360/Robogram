@@ -64,6 +64,7 @@ public class PostDetailFragment extends Fragment {
     private CommentAdapter adapter;
     private MaterialButton btnReply;
     private TextView tvCommentText;
+    private TextView tvCommentCount;
 
     public static final String TAG = "PostDetailFragment";
 
@@ -112,6 +113,7 @@ public class PostDetailFragment extends Fragment {
         rvComments = view.findViewById(R.id.rvComments);
         btnReply = view.findViewById(R.id.btnReply);
         tvCommentText = view.findViewById(R.id.tvCommentText);
+        tvCommentCount = view.findViewById(R.id.tvCommentCount);
 
         //initiate comments
         comments = new ArrayList<>();
@@ -169,6 +171,7 @@ public class PostDetailFragment extends Fragment {
                         }else{
                             tvCommentText.setText("");
                             Toast.makeText(getContext(), "Comment Posted!", Toast.LENGTH_SHORT).show();
+
                         }
                     }
                 });
@@ -184,8 +187,8 @@ public class PostDetailFragment extends Fragment {
         //Specify which class to query
         ParseQuery<Comment> query = ParseQuery.getQuery(Comment.class);
         // Specify the object id
-        query.include(KEY_USERNAME);
         query.whereEqualTo(KEY_POST, post);
+        query.include(KEY_USERNAME);
         query.addDescendingOrder(KEY_CREATED_AT);
         query.findInBackground(new FindCallback<Comment>() {
             @Override
@@ -194,6 +197,7 @@ public class PostDetailFragment extends Fragment {
                     Log.e(TAG, "Error requesting comments" + e);
                 }else{
                     comments.addAll(objects);
+                    tvCommentCount.setText(objects.size() + " comments");
                     adapter.notifyDataSetChanged();
                 }
             }

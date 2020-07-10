@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
     android:background="#4C4141"
-    android:backgroundTint="#DDDADA">
+    android:backgroundTint="#F6F6F6">
 
     <ImageView
         android:id="@+id/ivProfile"
@@ -16,6 +16,7 @@
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/instagram_user_filled_24"
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView

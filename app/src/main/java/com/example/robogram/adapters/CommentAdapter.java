@@ -1,6 +1,7 @@
 package com.example.robogram.adapters;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.robogram.R;
 import com.example.robogram.data.model.Comment;
+import com.parse.ParseException;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -99,7 +101,14 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         }
 
         public void bind(Comment comment) {
-            tvComment.setText(comment.getText());
+
+            String text = "";
+            try {
+                text = "<b>" + comment.getUser().fetchIfNeeded().getUsername() + "</b> " + comment.getText();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            tvComment.setText(Html.fromHtml(text));
             Date date = comment.getCreatedAt();
             String dateWithMonthAndDayOnly = new SimpleDateFormat("MMMM dd.").format(date);
             tvTimeAgo.setText(dateWithMonthAndDayOnly);

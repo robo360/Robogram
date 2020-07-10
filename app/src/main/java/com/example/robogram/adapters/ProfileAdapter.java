@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.example.robogram.R;
 import com.example.robogram.data.model.Post;
 import com.example.robogram.fragments.HomeFragment;
+import com.example.robogram.fragments.ProfileFragment;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.SaveCallback;
@@ -28,7 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
+public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHolder>{
     /**
      * Called when RecyclerView needs a new {@link ViewHolder} of the given type to represent
      * an item.
@@ -51,13 +52,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
      */
     Context context;
     List<Post> posts;
-    HomeFragment fragment;
+    ProfileFragment fragment;
 
     public interface OnClickBtnMoreListener{
         public void onBtnMoreClicked(int position);
     }
 
-    public PostAdapter(Context context, List<Post> posts, HomeFragment fragment) {
+    public ProfileAdapter(Context context, List<Post> posts, ProfileFragment fragment) {
         this.context = context;
         this.posts = posts;
         this.fragment = fragment;
@@ -65,7 +66,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_post, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_profile, parent, false);
         return new ViewHolder(view);
     }
 
@@ -106,76 +107,16 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        private TextView tvDescription;
-        private TextView tvUsername;
-        private ImageView ivImagePost;
-        private TextView tvCreatedAt;
-        private ImageButton btnLike;
-        private TextView tvLikes;
-        private ImageButton btnMore;
-        private ImageButton btnReply;
+        private ImageView ivImage;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvDescription = itemView.findViewById(R.id.tvDescription);
-            tvUsername = itemView.findViewById(R.id.tvUsername);
-            ivImagePost = itemView.findViewById(R.id.ivImagePost);
-            tvCreatedAt = itemView.findViewById(R.id.tvCreatedAt);
-            btnLike = itemView.findViewById(R.id.btnLike);
-            tvLikes = itemView.findViewById(R.id.tvLikes);
-            btnMore = itemView.findViewById(R.id.btnMore);
-            btnReply = itemView.findViewById(R.id.btnComment);
-
-            //set a listener on the btnLike button
-            btnLike.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Post post = posts.get(getAdapterPosition());
-                    int likes = post.getLikes() + 1;
-                    post.setLikes(likes);
-                    btnLike.setImageDrawable(context.getDrawable(R.drawable.ufi_heart_active));
-                    tvLikes.setText(Integer.toString(likes) + " likes");
-                    post.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if(e != null){
-                                Log.e("HomeActivity", "Error Saving likes" + e);
-                                Toast.makeText(context, "Did not like", Toast.LENGTH_SHORT).show();
-                                btnLike.setImageDrawable(context.getDrawable(R.drawable.ufi_heart));
-                            }
-                        }
-                    });
-                }
-            });
-
-            //Set a listener on the view in another screen button
-            btnMore.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    fragment.onBtnMoreClicked(getAdapterPosition());
-                }
-            });
-
-            //Set a listener on the reply button
-            btnReply.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    fragment.onBtnMoreClicked(getAdapterPosition());
-                }
-            });
-
+            ivImage = itemView.findViewById(R.id.ivImage);
         }
 
         public void bind(Post post) {
-            String description = "<b>" + post.getUser().getUsername() + "</b> " + post.getDescription();
-            tvDescription.setText(Html.fromHtml(description));
-            tvUsername.setText(post.getUser().getUsername());
-            tvLikes.setText(post.getLikes()+ " likes");
-            Date date = post.getCreatedAt();
-            String dateWithMonthAndDayOnly = new SimpleDateFormat("MMMM dd.").format(date);
-            tvCreatedAt.setText(dateWithMonthAndDayOnly);
             ParseFile image = post.getImage();
             if(image != null){
-                Glide.with(context).load(post.getImage().getUrl()).into(ivImagePost);
+                Glide.with(context).load(post.getImage().getUrl()).into(ivImage);
             }
 
         }

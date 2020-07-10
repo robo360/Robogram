@@ -33,11 +33,11 @@ import static com.example.robogram.data.model.Post.KEY_USERNAME;
 public class HomeFragment extends Fragment implements PostAdapter.OnClickBtnMoreListener {
     public static final String TAG = "HomeFragment";
 
-    public PostAdapter adapter;
-    private RecyclerView rvPosts;
+    protected PostAdapter adapter;
+    protected RecyclerView rvPosts;
     protected List<Post> posts;
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private EndlessRecyclerViewScrollListener scrollListener;
+    protected SwipeRefreshLayout swipeRefreshLayout;
+    protected EndlessRecyclerViewScrollListener scrollListener;
     HomeFragment fragment;
 
     public HomeFragment() {
