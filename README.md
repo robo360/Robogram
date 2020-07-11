@@ -40,7 +40,9 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-### File to big! Check github for the gif walkthrough
+### File to big! Check the following links for walkthroughs
+1.[Walkthrough 1](https://i.imgur.com/DpToAvI.gif).
+2.[Walkthrough 2](https://i.imgur.com/k6VQx1H.gif).
 
 <img src='https://i.imgur.com/DpToAvIh.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' /> 
 
