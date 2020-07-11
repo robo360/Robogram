@@ -1,4 +1,8 @@
-package com.example.robogram.fragments;
+package com.example.robogram.ui.login;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.FragmentManager;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -7,119 +11,79 @@ import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.FileProvider;
-import androidx.fragment.app.Fragment;
-
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.robogram.MainActivity;
 import com.example.robogram.R;
-import com.example.robogram.data.model.Post;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
-import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
-import static android.app.Activity.RESULT_OK;
-import static com.example.robogram.data.model.Post.KEY_USERNAME;
+public class SignupActivity extends AppCompatActivity {
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ComposeFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class ComposeFragment extends Fragment {
     private Button btnSubmit;
     private Button btnCapture;
-    private ImageView ivImagePost;
-    private EditText etDescription;
-    private ProgressBar pb;
+    private ImageView ivProfile;
+    private TextView skip;
 
-    public final String APP_TAG = "ComposeFragment";
+    public final String APP_TAG = "SignUpActivity";
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
     public String photoFileName = "photo.jpg";
     File photoFile;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public ComposeFragment() {
-        // Required empty public constructor
-    }
-
-    public static ComposeFragment newInstance( ) {
-        ComposeFragment fragment = new ComposeFragment();
-        return fragment;
-    }
-
-    /**
-     * Called immediately after {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}
-     * has returned, but before any saved state has been restored in to the view.
-     * This gives subclasses a chance to initialize themselves once
-     * they know their view hierarchy has been completely created.  The fragment's
-     * view hierarchy is not however attached to its parent at this point.
-     *
-     * @param view               The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
-     * @param savedInstanceState If non-null, this fragment is being re-constructed
-     */
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        btnCapture = view.findViewById(R.id.btnCapture);
-        btnSubmit = view.findViewById(R.id.btnSubmit);
-        ivImagePost = view.findViewById(R.id.ivImagePost);
-        etDescription = view.findViewById(R.id.etDescription);
-        pb = view.findViewById(R.id.pbLoading);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+        setContentView(R.layout.activity_signup);
 
+        btnCapture = findViewById(R.id.btnCapture);
+        btnSubmit = findViewById(R.id.btnSubmit);
+        ivProfile = findViewById(R.id.ivProfile);
+        skip = findViewById(R.id.tvSkip);
+
+        //set a listener on skip
+        skip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                gotoMainActity();
+            }
+        });
+
+        //set a clickListener on the submit button
         btnCapture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 LaunchCamera();
+                btnSubmit.setVisibility(View.VISIBLE);
+                btnCapture.setVisibility(View.GONE);
             }
         });
-
-        //getPostsQuery();
-        //pb.setVisibility(View.VISIBLE);
+        //set a clickListener on capture button
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                pb.setVisibility(View.VISIBLE);
-                //final ProgressDialog progress = ProgressDialog.show(MainActivity.this, "", "", true, true);
-                String description = etDescription.getText().toString();
-                if(description.isEmpty()){
-                    Toast.makeText(getContext(), " Description can't be empty", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if(photoFile == null || ivImagePost.getDrawable() == null){
+                if(photoFile == null || ivProfile.getDrawable() == null){
                     Snackbar.make(btnCapture, "No image taken", BaseTransientBottomBar.LENGTH_SHORT);
                     return;
                 }
 
                 ParseUser currentUser = ParseUser.getCurrentUser();
-                savePost(description, currentUser, new ParseFile(photoFile));
-                Toast.makeText(getContext(), "Posted", Toast.LENGTH_LONG).show();
+                Toast.makeText(SignupActivity.this, "Submitting", Toast.LENGTH_SHORT).show();
+                savePost(currentUser, new ParseFile(photoFile));
                 //progress.cancel();
             }
         });
@@ -130,7 +94,7 @@ public class ComposeFragment extends Fragment {
         // Get safe storage directory for photos
         // Use `getExternalFilesDir` on Context to access package-specific directories.
         // This way, we don't need to request external read/write runtime permissions.
-        File mediaStorageDir = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), APP_TAG);
+        File mediaStorageDir = new File(this.getExternalFilesDir(Environment.DIRECTORY_PICTURES), APP_TAG);
 
         // Create the storage directory if it does not exist
         if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
@@ -152,12 +116,12 @@ public class ComposeFragment extends Fragment {
         // wrap File object into a content provider
         // required for API >= 24
         // See https://guides.codepath.com/android/Sharing-Content-with-Intents#sharing-files-with-api-24-or-higher
-        Uri fileProvider = FileProvider.getUriForFile(getContext(), "com.example.robogram", photoFile);
+        Uri fileProvider = FileProvider.getUriForFile(this, "com.example.robogram", photoFile);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
 
         // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
         // So as long as the result is not null, it's safe to use the intent.
-        if (intent.resolveActivity(getContext().getPackageManager()) != null) {
+        if (intent.resolveActivity(this.getPackageManager()) != null) {
             // Start the image capture intent to take photo
             startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
         }
@@ -173,30 +137,24 @@ public class ComposeFragment extends Fragment {
                 Bitmap takenImage = rotateBitmapOrientation(photoFile.getPath());
                 // RESIZE BITMAP, see section below
                 // Load the taken image into a preview
-                ivImagePost.setImageBitmap(takenImage);
+                ivProfile.setImageBitmap(takenImage);
             } else { // Result was a failure
-                Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
 
             }
         }
     }
 
-    private void savePost(String description, ParseUser currentUser, ParseFile image) {
-        Post post = new Post();
-        post.setDescription(description);
-        post.setUser(currentUser);
-        post.setImage(image);
-        post.saveInBackground(new SaveCallback() {
+    private void savePost(ParseUser currentUser, ParseFile image) {
+        currentUser.put("image", image);
+        currentUser.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 if(e != null){
-                    Log.e("MainActivity", "Error saving: " + e);
-                    Snackbar.make(btnSubmit, "Error saving", BaseTransientBottomBar.LENGTH_SHORT);
-                    pb.setVisibility(View.INVISIBLE);
+                    Log.e(APP_TAG, "Error signing up: " + e);
+                    Snackbar.make(btnSubmit, "Error signing up" + e, BaseTransientBottomBar.LENGTH_SHORT);
                 }else{
-                    etDescription.setText("");
-                    ivImagePost.setImageResource(0);
-                    pb.setVisibility(View.INVISIBLE);
+                    gotoMainActity();
                 }
             }
         });
@@ -229,11 +187,9 @@ public class ComposeFragment extends Fragment {
         // Return result
         return rotatedBitmap;
     }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_compose, container, false);
+    private void gotoMainActity() {
+        Intent i = new Intent(this, MainActivity.class);
+        Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show();
+        startActivity(i);
     }
 }

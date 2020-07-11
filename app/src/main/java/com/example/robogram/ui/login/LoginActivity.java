@@ -2,6 +2,7 @@ package com.example.robogram.ui.login;
 
 import android.app.Activity;
 
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -40,7 +41,6 @@ public class LoginActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         if(ParseUser.getCurrentUser() != null){
             goMainActivity();
         }
@@ -102,12 +102,19 @@ public class LoginActivity extends AppCompatActivity {
                             Log.i("LoginActivity", e.toString());
                             Snackbar.make(signupButton, "Sign up Failed.Try again!" + e, BaseTransientBottomBar.LENGTH_SHORT).show();
                         }else{
-                            goMainActivity();
+                            gotoTakePicture();
                         }
                     }
                 });
             }
         });
+    }
+
+    private void gotoTakePicture() {
+        Intent i = new Intent(LoginActivity.this, SignupActivity.class);
+        Toast.makeText(LoginActivity.this, "Sign up Successful", Toast.LENGTH_SHORT).show();
+        startActivity(i);
+        finish();
     }
 
     private void goMainActivity() {
